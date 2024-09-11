@@ -17,9 +17,9 @@ api_key = st.sidebar.text_input('OpenAI API Key')
 # access env variables
 db_uri = st.secrets["mongo_db_uri"]
 db_name = st.secrets["db_name"]
-collection_name = st.secrets["collecion_name"]
+collection_name = st.secrets["collection_name"]
 atlas_vector_search_index = st.secrets["search_index"]
-openai_key = st.secrets["api_key"]
+openai_key = st.secrets["openai_key"]
 
 model = 'gpt-4o'
 vector_search = MongoDBAtlasVectorSearch.from_connection_string(
