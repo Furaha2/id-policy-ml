@@ -11,7 +11,7 @@ st.set_page_config(page_title="ID Policy Chatbot")
 st.title("ID Policy Bot")
 
 # input openai key
-api_key = st.sidebar.text_input('OpenAI API Key')
+# api_key = st.sidebar.text_input('OpenAI API Key')
 
 # save env vars as secrets
 # access env variables
@@ -19,13 +19,13 @@ db_uri = st.secrets["mongo_db_uri"]
 db_name = st.secrets["db_name"]
 collection_name = st.secrets["collection_name"]
 atlas_vector_search_index = st.secrets["search_index"]
-openai_key = st.secrets["openai_key"]
+api_key = st.secrets["OPENAI_API_KEY"]
 
 model = 'gpt-4o'
 vector_search = MongoDBAtlasVectorSearch.from_connection_string(
         db_uri,
         db_name + "." + collection_name,
-        OpenAIEmbeddings(),
+        OpenAIEmbeddings(api_key=api_key),
         index_name=atlas_vector_search_index)
 
 
@@ -45,7 +45,7 @@ prompt_q = ChatPromptTemplate.from_template(
 generate_questions = (
     {"question": RunnablePassthrough()}
     | prompt_q
-    | ChatOpenAI(model=model, temperature=0.7)
+    | ChatOpenAI(model=model, temperature=0.7, api_key=api_key)
     | StrOutputParser()
     | (lambda x: x.split("\n"))
 )
@@ -73,7 +73,7 @@ prompt_final = ChatPromptTemplate.from_template(
     """
 )
 
-llm = ChatOpenAI(model=model, temperature=0)
+llm = ChatOpenAI(model=model, temperature=0, api_key=api_key)
 
 multi_query_chain = (
     {'context': rag_chain, 'question': RunnablePassthrough()} # context is answer returned above
